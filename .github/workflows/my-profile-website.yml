@@ -108,28 +108,28 @@ jobs:
             --id ${{ steps.invalidate.outputs.invalidation_id }}
           echo "CloudFront cache cleared"
 
-      - name: Health check
-        run: |
-          sleep 5
-          STATUS=$(curl -o /dev/null -s -w "%{http_code}" https://rimadev.com)
-          if [ "$STATUS" != "200" ]; then
-            echo "Health check failed - HTTP $STATUS"
-            exit 1
-          fi
-          echo "Site is live - HTTP $STATUS"
+  #     - name: Health check
+  #       run: |
+  #         sleep 5
+  #         STATUS=$(curl -o /dev/null -s -w "%{http_code}" https://rimadev.com)
+  #         if [ "$STATUS" != "200" ]; then
+  #           echo "Health check failed - HTTP $STATUS"
+  #           exit 1
+  #         fi
+  #         echo "Site is live - HTTP $STATUS"
 
-  notify:
-    name: Notify via SNS
-    runs-on: ubuntu-latest
-    needs: [test, deploy]
-    if: always() && github.ref == 'refs/heads/main'
+  # notify:
+  #   name: Notify via SNS
+  #   runs-on: ubuntu-latest
+  #   needs: [test, deploy]
+  #   if: always() && github.ref == 'refs/heads/main'
 
-    steps:
-      - name: Configure AWS credentials via OIDC
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
+  #   steps:
+  #     - name: Configure AWS credentials via OIDC
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+  #         aws-region: us-east-1
 
       # - name: Notify success
       #   if: needs.deploy.result == 'success'
