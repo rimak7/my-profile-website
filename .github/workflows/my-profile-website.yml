@@ -45,15 +45,18 @@ jobs:
 
       - name: Check for broken local links
         run: |
-          # Extract local src/href references and verify files exist
-          grep -oP '(src|href)="\K[^"]+' index.html | grep -v "^http" | grep -v "^#" | while read file; do
-            if [ ! -f "$file" ]; then
-              echo "❌ Missing file referenced in HTML: $file"
-              exit 1
-            fi
-          done
+          grep -oP '(src|href)="\K[^"]+' index.html \
+            | grep -v "^http" \
+            | grep -v "^#" \
+            | grep -v "^mailto:" \
+            | grep -v "^tel:" \
+            | while read file; do
+              if [ ! -f "$file" ]; then
+                echo "❌ Missing file referenced in HTML: $file"
+                exit 1
+              fi
+            done
           echo "✅ All local links valid"
-
   deploy:
     name: 🚀 Deploy to S3 + CloudFront
     runs-on: ubuntu-latest
