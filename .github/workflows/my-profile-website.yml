@@ -87,7 +87,7 @@ jobs:
             --exclude ".git/*" \
             --exclude ".github/*" \
             --exclude "*.md" \
-        
+            --delete
           echo "Files synced to S3"
 
       - name: Invalidate CloudFront cache
@@ -146,7 +146,7 @@ jobs:
             --subject "Deployed successfully - www.rimadev.com" \
             --message "Site deployed successfully. Commit: $SHA Branch: $BRANCH Author: $ACTOR Message: $COMMIT_MSG Run: https://github.com/rimak7/my-profile-website/actions/runs/$RUN_ID Live: https://www.rimadev.com"
 
-      # - name: Notify failure
+      - name: Notify failure
         if: needs.test.result == 'failure' || needs.deploy.result == 'failure'
         env:
           TOPIC: ${{ secrets.SNS_TOPIC_ARN }}
@@ -166,3 +166,5 @@ jobs:
             --topic-arn "$TOPIC" \
             --subject "Pipeline failed - www.rimadev.com" \
             --message "Pipeline failed at: $FAILED_JOB Commit: $SHA Branch: $BRANCH Author: $ACTOR Message: $COMMIT_MSG Logs: https://github.com/rimak7/my-profile-website/actions/runs/$RUN_ID"
+
+            
