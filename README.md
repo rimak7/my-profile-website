@@ -142,32 +142,6 @@ my-profile-website/
 
 ---
 
-## Local Development with Docker
-
-Run the site locally using Docker Desktop:
-
-```bash
-# Option 1 — bind mount (live file editing)
-docker run -d -p 8080:80 \
-  -v "//$(pwd):/usr/share/nginx/html:ro" \
-  nginx:alpine
-
-# Option 2 — build a self-contained image
-docker build -t rimadev .
-docker run -d -p 8080:80 --name rimadev rimadev
-
-# Visit http://localhost:8080
-```
-
-**Dockerfile:**
-```dockerfile
-FROM nginx:alpine
-COPY . /usr/share/nginx/html
-EXPOSE 80
-```
-
----
-
 ## Deployment
 
 Deployment is fully automated. Just push to `main`:
