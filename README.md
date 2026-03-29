@@ -1,4 +1,4 @@
-# rimadev.com — Portfolio Website & CI/CD Pipeline
+# rimadev.com — Portfolio Website
 
 > Personal DevOps portfolio site for **Armande Kouadio** — deployed via a fully automated CI/CD pipeline using GitHub Actions, AWS S3, CloudFront, Route53, SNS, and CloudWatch.
 
