@@ -1,138 +1,213 @@
-<div align="center">
+# rimadev.com — Portfolio Website & CI/CD Pipeline
 
-# Hey, I'm Armande Kouadio 👋
-### DevOps Engineer · Cloud Architect · AWS Certified
+> Personal DevOps portfolio site for **Armande Kouadio** — deployed via a fully automated CI/CD pipeline using GitHub Actions, AWS S3, CloudFront, Route53, SNS, and CloudWatch.
 
-**Bloomfield, NJ** &nbsp;|&nbsp; [LinkedIn](https://www.linkedin.com/in/armande-kouadio-920770323) &nbsp;|&nbsp; [GitHub](https://github.com/rimak7) &nbsp;|&nbsp; armande.kanm7@gmail.com
-
-</div>
+🌐 **Live site:** [www.rimadev.com](https://www.rimadev.com)
 
 ---
 
-## 🧑‍💻 About Me
+## Architecture Overview
 
-I'm a **DevOps Engineer with 7+ years of experience** spanning Linux Administration, Cloud Engineering, and DevOps. I specialize in building scalable, highly available, and secure infrastructure — from bare metal servers to multi-region Kubernetes clusters on AWS.
+```
+Developer (local)
+      │
+      │  git push
+      ▼
+GitHub (main branch)
+      │
+      │  triggers
+      ▼
+GitHub Actions CI/CD Pipeline
+      │
+      ├── 🧪 Test & Lint
+      │       ├── Check index.html exists
+      │       ├── Validate HTML structure
+      │       ├── Check for broken local links
+      │       └── Check file size
+      │
+      ├── 🚀 Deploy (only on push to main)
+      │       ├── OIDC → AWS credentials (no long-lived keys)
+      │       ├── Sync files to S3
+      │       ├── Invalidate CloudFront cache
+      │       ├── Wait for invalidation to complete
+      │       └── Health check (HTTP 200)
+      │
+      └── 📣 Notify via SNS
+              ├── Email on success
+              └── Email on failure
+                        │
+                        ▼
+              www.rimadev.com (live)
 
-Currently working at **Horizon Blue Cross Blue Shield of New Jersey**, where I design and operate mission-critical, HIPAA-compliant systems at scale.
+— — — between deployments — — —
 
-- 🔭 Currently working on AWS EKS microservices infrastructure & GitOps workflows with ArgoCD
-- 🌱 Pursuing **AWS Certified DevOps Engineer – Professional** & **CKA**
-- 💬 Ask me about Kubernetes, Terraform, CI/CD, AWS architecture, and DevSecOps
-- 🌍 Bilingual — **English & French**
-
----
-
-## 🛠️ Tech Stack
-
-**Cloud Platforms**
-
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
-![EC2](https://img.shields.io/badge/EC2-FF9900?style=flat-square&logo=amazon-ec2&logoColor=white)
-![Lambda](https://img.shields.io/badge/Lambda-FF9900?style=flat-square&logo=aws-lambda&logoColor=white)
-![S3](https://img.shields.io/badge/S3-569A31?style=flat-square&logo=amazon-s3&logoColor=white)
-![CloudFront](https://img.shields.io/badge/CloudFront-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
-![Route53](https://img.shields.io/badge/Route_53-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
-
-**Containerization & Orchestration**
-
-![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![Helm](https://img.shields.io/badge/Helm-0F1689?style=flat-square&logo=helm&logoColor=white)
-![EKS](https://img.shields.io/badge/Amazon_EKS-FF9900?style=flat-square&logo=amazon-eks&logoColor=white)
-![ECS](https://img.shields.io/badge/Amazon_ECS-FF9900?style=flat-square&logo=amazon-ecs&logoColor=white)
-
-**Infrastructure as Code & Config**
-
-![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)
-![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=flat-square&logo=ansible&logoColor=white)
-![Vault](https://img.shields.io/badge/HashiCorp_Vault-000000?style=flat-square&logo=vault&logoColor=white)
-
-**CI/CD & GitOps**
-
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
-![ArgoCD](https://img.shields.io/badge/ArgoCD-EF7B4D?style=flat-square&logo=argo&logoColor=white)
-![CodePipeline](https://img.shields.io/badge/CodePipeline-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
-![SonarQube](https://img.shields.io/badge/SonarQube-4E9BCD?style=flat-square&logo=sonarqube&logoColor=white)
-![Trivy](https://img.shields.io/badge/Trivy-1904DA?style=flat-square&logo=trivy&logoColor=white)
-![JFrog](https://img.shields.io/badge/JFrog-41BF47?style=flat-square&logo=jfrog&logoColor=white)
-
-**Monitoring & Observability**
-
-![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white)
-![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white)
-![Datadog](https://img.shields.io/badge/Datadog-632CA6?style=flat-square&logo=datadog&logoColor=white)
-![Splunk](https://img.shields.io/badge/Splunk-000000?style=flat-square&logo=splunk&logoColor=white)
-![CloudWatch](https://img.shields.io/badge/CloudWatch-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)
-
-**Scripting & Security**
-
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![Bash](https://img.shields.io/badge/Bash-4EAA25?style=flat-square&logo=gnu-bash&logoColor=white)
-![IAM](https://img.shields.io/badge/AWS_IAM-FF9900?style=flat-square&logo=amazon-aws&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+CloudWatch monitors CloudFront 5xx errors every 5 min
+      │
+      └── If error rate > 5% → SNS email alert
+```
 
 ---
 
-## 💼 Professional Experience
+## AWS Infrastructure
 
-| Period | Role | Company | Location |
-|---|---|---|---|
-| Sep 2021 – Present | **DevOps Engineer** | Horizon Blue Cross Blue Shield of NJ | Newark, NJ |
-| Jun 2019 – Sep 2021 | **Cloud Engineer** | Navy Federal | Vienna, VA |
-| Feb 2017 – Jun 2019 | **Linux System Administrator** | DR Financial Services | Houston, TX |
-
-### Key Achievements
-
-- 🏥 Designed and deployed a **HIPAA-compliant serverless architecture** on AWS (S3, CloudFront, API Gateway, Lambda, DynamoDB, Route 53) with end-to-end encryption and centralized observability via CloudWatch, SNS, and X-Ray
-- ☸️ Led **Kubernetes traffic redesign** in EKS — migrated services from LoadBalancer to ClusterIP with AWS ALB Ingress, reducing infrastructure cost and improving security
-- 🔄 Implemented **GitOps workflows** with ArgoCD and Helm ensuring continuous reconciliation between Git state and production clusters
-- 🏗️ Built a **reusable Terraform module landing zone** to support enterprise on-prem to AWS migration — multi-AZ VPC, subnets, NAT gateways, least-privilege IAM
-- ⚡ Reduced environment provisioning time by **60%** and cloud spend by **25%** through IaC automation and rightsizing strategies
-- 🔐 Integrated **SonarQube** (code quality) and **Trivy** (container security scanning) into CI/CD pipelines to reduce deployment failures
+| Service | Purpose |
+|---|---|
+| **S3** | Static website hosting — stores `index.html` |
+| **CloudFront** | Global CDN — serves site with HTTPS |
+| **Route53** | DNS — routes `rimadev.com` → CloudFront |
+| **ACM** | SSL/TLS certificate for HTTPS |
+| **SNS (FIFO)** | Email notifications on pipeline success/failure |
+| **CloudWatch** | Alarm on CloudFront 5xx error rate > 5% |
+| **IAM (OIDC)** | Keyless auth between GitHub Actions and AWS |
 
 ---
 
-## 🏅 Certifications
+## CI/CD Pipeline
 
-| Certification | Issuer | Status |
+### Trigger
+- Every `git push` to `main` branch
+- Pull requests to `main` (test job only, no deploy)
+
+### Jobs
+
+#### 1. 🧪 Test & Lint
+Runs on every push and PR:
+- Verifies `index.html` exists
+- Validates HTML structure (`<html>`, `<head>`, `<body>`)
+- Checks all local file references exist
+- Checks file is not empty (min 500 bytes)
+
+#### 2. 🚀 Deploy to S3 + CloudFront
+Runs only on push to `main` after tests pass:
+- Authenticates to AWS via **OIDC** — no static credentials stored
+- Syncs files to S3 with `--delete` flag to remove stale files
+- Creates CloudFront invalidation for `/*`
+- Waits for invalidation to complete
+- Runs HTTP health check against `https://www.rimadev.com`
+
+#### 3. 📣 Notify via SNS
+Runs after deploy (always, even on failure):
+- Sends success email with commit SHA, author, branch, and run link
+- Sends failure email identifying which job failed with logs link
+
+---
+
+## Security
+
+- **OIDC authentication** — GitHub Actions assumes an IAM role directly, no AWS access keys stored anywhere
+- **Least-privilege IAM role** — scoped to only `S3`, `CloudFront`, and `SNS` permissions
+- **Role trust policy** — restricted to `repo:rimak7/my-profile-website` only, no other repo can assume it
+- **HTTPS enforced** — via ACM certificate attached to CloudFront
+- **S3 not directly accessible** — all traffic routed through CloudFront
+
+---
+
+## Monitoring & Alerting
+
+| What | How | Alert |
 |---|---|---|
-| [AWS Certified Solutions Architect – Associate](https://www.credly.com/badges/93327af7-5337-4c9f-8d06-2b3e56e2e0f7) | Amazon Web Services | ✅ Earned — April 2025 |
-| AWS Certified DevOps Engineer – Professional | Amazon Web Services | 🔄 In Progress |
-| CKA – Certified Kubernetes Administrator | CNCF | 🔄 In Progress |
+| Pipeline success | GitHub Actions + SNS | Email |
+| Pipeline failure | GitHub Actions + SNS | Email |
+| Site 5xx errors | CloudWatch Alarm | SNS Email |
+
+**CloudWatch Alarm config:**
+- Metric: `CloudFront → 5xxErrorRate`
+- Period: 5 minutes
+- Threshold: > 5%
+- Action: SNS notification → email
 
 ---
 
-## 🎓 Education
+## Repository Structure
 
-**Bachelor of Science in Computer Science**
-PIGIER Côte d'Ivoire — Abidjan, Côte d'Ivoire &nbsp;|&nbsp; 2012 – 2016
-
----
-
-## 📊 GitHub Stats
-
-<div align="center">
-
-![Armande's GitHub Stats](https://github-readme-stats.vercel.app/api?username=rimak7&show_icons=true&theme=tokyonight&hide_border=true&count_private=true)
-&nbsp;
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=rimak7&layout=compact&theme=tokyonight&hide_border=true)
-
-</div>
+```
+my-profile-website/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml       # CI/CD pipeline definition
+├── index.html               # Portfolio site (HTML + CSS + JS, single file)
+└── README.md
+```
 
 ---
 
-## 📫 Get in Touch
+## GitHub Secrets Required
 
-<div align="center">
-
-[![Email](https://img.shields.io/badge/Email-armande.kanm7@gmail.com-00e5ff?style=for-the-badge&logo=gmail&logoColor=white)](mailto:armande.kanm7@gmail.com)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Armande_Kouadio-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/armande-kouadio-920770323)
-[![Phone](https://img.shields.io/badge/Phone-(929)_636--5601-4EAA25?style=for-the-badge&logoColor=white)](tel:9296365601)
-
-</div>
+| Secret | Description |
+|---|---|
+| `AWS_ROLE_ARN` | IAM role ARN for OIDC authentication |
+| `S3_BUCKET` | S3 bucket name |
+| `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront distribution ID |
+| `SNS_TOPIC_ARN` | SNS FIFO topic ARN for notifications |
 
 ---
 
-<div align="center">
-  <sub>Open to senior DevOps / Cloud roles, SRE, and DevSecOps opportunities.</sub>
-</div>
+## Local Development with Docker
+
+Run the site locally using Docker Desktop:
+
+```bash
+# Option 1 — bind mount (live file editing)
+docker run -d -p 8080:80 \
+  -v "//$(pwd):/usr/share/nginx/html:ro" \
+  nginx:alpine
+
+# Option 2 — build a self-contained image
+docker build -t rimadev .
+docker run -d -p 8080:80 --name rimadev rimadev
+
+# Visit http://localhost:8080
+```
+
+**Dockerfile:**
+```dockerfile
+FROM nginx:alpine
+COPY . /usr/share/nginx/html
+EXPOSE 80
+```
+
+---
+
+## Deployment
+
+Deployment is fully automated. Just push to `main`:
+
+```bash
+git add .
+git commit -m "your message"
+git push origin main
+```
+
+GitHub Actions will automatically:
+1. Run tests and lint checks
+2. Deploy to S3 and invalidate CloudFront cache
+3. Run a health check
+4. Send an email notification with the result
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Local server | Docker + nginx:alpine |
+| Storage | AWS S3 |
+| CDN | AWS CloudFront |
+| DNS | AWS Route53 |
+| SSL | AWS ACM |
+| CI/CD | GitHub Actions |
+| Auth | AWS IAM OIDC (keyless) |
+| Notifications | AWS SNS FIFO |
+| Monitoring | AWS CloudWatch |
+
+---
+
+## Author
+
+**Armande Kouadio** — DevOps Engineer  
+📧 armande.kanm7@gmail.com  
+📞 (929) 636-5601  
+🔗 [LinkedIn](https://linkedin.com/in/armande-kouadio-920770323)  
+🐙 [GitHub](https://github.com/rimak7)  
+🌐 [www.rimadev.com](https://www.rimadev.com)
