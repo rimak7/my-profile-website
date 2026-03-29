@@ -145,6 +145,7 @@ jobs:
             --topic-arn "$TOPIC" \
             --subject "Deployed successfully - www.rimadev.com" \
             --message-group-id "pipeline" \
+            --message-deduplication-id "$RUN_ID-success" \
             --message "Site deployed successfully. Commit: $SHA Branch: $BRANCH Author: $ACTOR Message: $COMMIT_MSG Run: https://github.com/rimak7/my-profile-website/actions/runs/$RUN_ID Live: https://www.rimadev.com"
 
       - name: Notify failure
@@ -167,4 +168,5 @@ jobs:
             --topic-arn "$TOPIC" \
             --subject "Pipeline failed - www.rimadev.com" \
             --message-group-id "pipeline" \
+            --message-deduplication-id "$RUN_ID-failure" \
             --message "Pipeline failed at: $FAILED_JOB Commit: $SHA Branch: $BRANCH Author: $ACTOR Message: $COMMIT_MSG Logs: https://github.com/rimak7/my-profile-website/actions/runs/$RUN_ID"
