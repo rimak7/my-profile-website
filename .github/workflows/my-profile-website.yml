@@ -144,6 +144,7 @@ jobs:
           aws sns publish \
             --topic-arn "$TOPIC" \
             --subject "Deployed successfully - www.rimadev.com" \
+            --message-group-id "pipeline" \
             --message "Site deployed successfully. Commit: $SHA Branch: $BRANCH Author: $ACTOR Message: $COMMIT_MSG Run: https://github.com/rimak7/my-profile-website/actions/runs/$RUN_ID Live: https://www.rimadev.com"
 
       - name: Notify failure
@@ -165,6 +166,5 @@ jobs:
           aws sns publish \
             --topic-arn "$TOPIC" \
             --subject "Pipeline failed - www.rimadev.com" \
+            --message-group-id "pipeline" \
             --message "Pipeline failed at: $FAILED_JOB Commit: $SHA Branch: $BRANCH Author: $ACTOR Message: $COMMIT_MSG Logs: https://github.com/rimak7/my-profile-website/actions/runs/$RUN_ID"
-
-            
